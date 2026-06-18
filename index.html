@@ -1,10 +1,113 @@
 <!DOCTYPE html>
-<html>
+<html lang="uk">
 <head>
-    <title>МWelcome to Sushi Vurado</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SUSHI VURADO | Welcome</title>
+    <style>
+        /* Базові налаштування: темний фон та сучасний шрифт */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #121212;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+
+        /* Анімація для заголовка */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header-container {
+            animation: fadeInDown 1.5s ease-out;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            letter-spacing: 4px;
+            margin: 0;
+            color: #e63946; /* Акцентний "суші" червоний колір */
+            text-transform: uppercase;
+        }
+
+        p.subtitle {
+            font-size: 1.2rem;
+            color: #a8a8a8;
+            margin-top: 10px;
+        }
+
+        /* Контейнер для кнопок */
+        .action-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            width: 90%;
+            max-width: 600px;
+        }
+
+        /* Стиль кнопок */
+        .btn {
+            background-color: #1e1e1e;
+            color: #ffffff;
+            border: 1px solid #333;
+            padding: 15px 20px;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            background-color: #e63946;
+            border-color: #e63946;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(230, 57, 70, 0.4);
+        }
+
+        /* Спеціальний стиль для кнопки логіну персоналу */
+        .btn-secure {
+            grid-column: span 2;
+            background-color: transparent;
+            border: 1px dashed #555;
+            color: #888;
+            margin-top: 20px;
+        }
+
+        .btn-secure:hover {
+            background-color: #2a2a2a;
+            color: #fff;
+            border-color: #fff;
+        }
+    </style>
 </head>
 <body>
-    <h1>Sushi-Net!</h1>
+
+    <div class="header-container">
+        <h1>SUSHI VURADO</h1>
+        <p class="subtitle">Смак Сходу. Захист Майбутнього.</p>
+    </div>
+
+    <div class="action-grid">
+        <!-- Це кнопки для клієнтів -->
+        <a href="menu.html" class="btn">🍣 Наше Меню (Гості)</a>
+        <a href="booking.html" class="btn">📅 Забронювати стіл</a>
+        <a href="contacts.html" class="btn">📍 Локація та Контакти</a>
+        <a href="about.html" class="btn">🥢 Про ресторан</a>
+        
+        <!-- Ця кнопка ідеально підходить для проєкту з безпеки -->
+        <a href="login.html" class="btn btn-secure">🛡️ Staff Portal (Адмін Логін)</a>
+    </div>
 
 </body>
 </html>

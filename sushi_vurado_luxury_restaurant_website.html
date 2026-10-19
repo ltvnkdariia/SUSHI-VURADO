@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sushi Vurado | Executive Omakase & Modern Japanese Gastronomy</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        obsidian: '#08080a',
+                        slateDark: '#101116',
+                        slateBorder: '#1e2029',
+                        gold: '#d4af37',
+                        goldMuted: '#9e8432',
+                        goldLight: '#f3e5ab'
+                    },
+                    fontFamily: {
+                        serif: ['Cormorant Garamond', 'Cinzel', 'serif'],
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts & Font Awesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Inter:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js for Minimalist Radar Spectrum -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #08080a;
+            color: #d1d5db;
+            overflow-x: hidden;
+            letter-spacing: 0.02em;
+        }
+        h1, h2, h3, .font-serif {
+            font-family: 'Cormorant Garamond', serif;
+        }
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #08080a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e2029;
+            border-radius: 2px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #d4af37;
+        }
+        .glass-panel {
+            background: rgba(16, 17, 22, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .glass-panel-gold {
+            background: rgba(212, 175, 55, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        .gold-gradient-text {
+            background: linear-gradient(135deg, #ffffff 0%, #d4af37 60%, #9e8432 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        #zen-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .drawer-slide {
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+    </style>
+</head>
+<body class="relative min-h-screen text-slate-300 selection:bg-gold selection:text-obsidian antialiased">
+
+    <!-- Minimal Canvas Particle Background -->
+    <canvas id="zen-canvas"></canvas>
+
+    <!-- Discrete Quality Telemetry Bar -->
+    <div class="relative z-40 bg-obsidian border-b border-slateBorder py-1.5 px-6 text-[11px] text-slate-400 font-mono flex justify-between items-center">
+        <div class="flex items-center space-x-3">
+            <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span class="tracking-widest uppercase">TSUKIJI LIVE LOG: 06:30 AM JST HON-MAGURO ARRIVED</span>
+        </div>
+        <div class="hidden sm:flex space-x-6 text-slate-500">
+            <span>RICE TEMP: <strong class="text-gold font-normal">36.5°C</strong></span>
+            <span>AIR HUMIDITY: <strong class="text-slate-300 font-normal">48%</strong></span>
+            <span>WASABI ORIGIN: <strong class="text-slate-300 font-normal">SHIZUOKA</strong></span>
+        </div>
+        <div class="text-slate-400">
+            <span>GINZA &bull; NEW YORK &bull; LONDON</span>
+        </div>
+    </div>
+
+    <!-- Navigation Header -->
+    <header class="sticky top-0 z-30 bg-obsidian/90 backdrop-blur-md border-b border-slateBorder/80 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <!-- Brand Logo -->
+            <a href="#" class="flex items-center gap-3 group">
+                <span class="text-gold font-serif text-2xl font-light tracking-widest border border-gold/30 w-9 h-9 rounded-full flex items-center justify-center bg-obsidian group-hover:border-gold transition-colors">武</span>
+                <div class="flex flex-col">
+                    <span class="text-xl font-serif tracking-[0.25em] text-slate-100 group-hover:text-gold transition-colors">VURADO</span>
+                    <span class="text-[9px] tracking-[0.35em] text-slate-500 uppercase -mt-1">Sushi & Omotenashi</span>
+                </div>
+            </a>
+
+            <!-- Minimalist Nav Links -->
+            <nav class="hidden md:flex items-center space-x-10 text-xs tracking-[0.2em] uppercase text-slate-400">
+                <a href="#philosophy" class="hover:text-gold transition-colors py-1">Philosophy</a>
+                <a href="#omakase-builder" class="hover:text-gold transition-colors py-1">Roll Studio</a>
+                <a href="#menu" class="hover:text-gold transition-colors py-1">A La Carte</a>
+                <a href="#sommelier" class="hover:text-gold transition-colors py-1">Sake Matching</a>
+                <a href="#reservation" class="hover:text-gold transition-colors py-1">Reservations</a>
+            </nav>
+
+            <!-- Actions: Currency & Slide-out Basket Toggle -->
+            <div class="flex items-center space-x-5">
+                <!-- Currency Selector -->
+                <div class="hidden sm:flex items-center bg-slateDark border border-slateBorder rounded-full p-0.5 text-[11px] font-mono">
+                    <button onclick="setCurrency('USD')" id="btn-usd" class="px-2.5 py-0.5 rounded-full text-gold bg-obsidian border border-gold/30">USD $</button>
+                    <button onclick="setCurrency('JPY')" id="btn-jpy" class="px-2.5 py-0.5 rounded-full text-slate-500 hover:text-slate-300">JPY ¥</button>
+                    <button onclick="setCurrency('EUR')" id="btn-eur" class="px-2.5 py-0.5 rounded-full text-slate-500 hover:text-slate-300">EUR €</button>
+                </div>
+
+                <!-- Basket Icon Drawer Trigger -->
+                <button onclick="toggleBasketDrawer()" class="relative p-2 text-slate-300 hover:text-gold transition-colors focus:outline-none flex items-center gap-2">
+                    <div class="relative">
+                        <i class="fa-solid fa-bag-shopping text-lg"></i>
+                        <span id="basket-badge" class="absolute -top-1.5 -right-2 bg-gold text-obsidian font-bold text-[9px] w-4 h-4 rounded-full flex items-center justify-center hidden">0</span>
+                    </div>
+                    <span class="text-xs tracking-widest font-mono hidden sm:inline uppercase text-slate-400 hover:text-gold">Bag (<span id="basket-count-text">0</span>)</span>
+                </button>
+
+                <!-- Mobile Menu Toggle -->
+                <button id="mobile-menu-btn" class="md:hidden text-slate-300 hover:text-gold text-xl focus:outline-none">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Drawer Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-slateDark border-b border-slateBorder px-6 py-6 space-y-4 tracking-widest uppercase text-xs text-center">
+            <a href="#philosophy" class="block py-1 text-slate-300 hover:text-gold">Philosophy</a>
+            <a href="#omakase-builder" class="block py-1 text-gold">Custom Roll Studio</a>
+            <a href="#menu" class="block py-1 text-slate-300 hover:text-gold">A La Carte Menu</a>
+            <a href="#sommelier" class="block py-1 text-slate-300 hover:text-gold">Sake Sommelier</a>
+            <a href="#reservation" class="block py-1 text-slate-300 hover:text-gold">Reserve Seat</a>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="relative z-10">
+
+        <!-- Hero Section -->
+        <section class="relative min-h-[85vh] flex items-center justify-center py-20 px-6">
+            <div class="max-w-4xl mx-auto text-center space-y-8">
+                <div class="inline-flex items-center gap-2 px-4 py-1 rounded-full glass-panel border border-gold/20 text-gold text-[10px] tracking-[0.3em] uppercase">
+                    MICHELIN SELECTION 2026 &bull; GINZA &bull; NEW YORK
+                </div>
+
+                <h1 class="text-4xl sm:text-6xl md:text-7xl font-serif font-light tracking-wide leading-tight text-slate-100">
+                    PURITY OF <span class="gold-gradient-text font-normal">EDOMAE</span><br>CRAFT.
+                </h1>
+
+                <p class="max-w-xl mx-auto text-xs sm:text-sm text-slate-400 font-light tracking-wider leading-relaxed">
+                    Savor wild-caught seafood flown directly from Tokyo's Toyosu Market. An intimate culinary experience anchored in discipline, minimalism, and harmony.
+                </p>
+
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+                    <a href="#reservation" class="w-full sm:w-auto px-8 py-3.5 rounded-full bg-gold text-obsidian font-semibold text-xs uppercase tracking-[0.2em] hover:bg-goldLight transition-all">
+                        Reserve Counter Seat
+                    </a>
+                    <a href="#omakase-builder" class="w-full sm:w-auto px-8 py-3.5 rounded-full glass-panel text-slate-200 border border-slateBorder hover:border-gold/40 text-xs uppercase tracking-[0.2em] transition-all">
+                        Roll Studio
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Philosophy Section -->
+        <section id="philosophy" class="py-24 px-6 max-w-6xl mx-auto border-t border-slateBorder/60">
+            <div class="text-center space-y-2 mb-16">
+                <span class="text-gold text-[10px] font-mono tracking-[0.3em] uppercase">Our Ethos</span>
+                <h2 class="text-3xl sm:text-4xl font-serif font-light text-slate-100">THE VURADO PHILOSOPHY</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="glass-panel p-8 rounded-2xl border border-slateBorder text-center space-y-3">
+                    <div class="text-gold text-2xl font-serif">一期一会</div>
+                    <h3 class="font-serif text-lg text-slate-200">Ichigo Ichie</h3>
+                    <p class="text-xs text-slate-400 font-light leading-relaxed">"One time, one meeting." Every piece of sushi is prepared as a unrepeatable moment in time, tailored specifically for the guest seated at our counter.</p>
+                </div>
+                <div class="glass-panel p-8 rounded-2xl border border-slateBorder text-center space-y-3">
+                    <div class="text-gold text-2xl font-serif">匠</div>
+                    <h3 class="font-serif text-lg text-slate-200">Takumi Craft</h3>
+                    <p class="text-xs text-slate-400 font-light leading-relaxed">Wild-caught seafood sourced directly from Tokyo’s Toyosu Market each morning, aged with precision to elevate natural umami notes.</p>
+                </div>
+                <div class="glass-panel p-8 rounded-2xl border border-slateBorder text-center space-y-3">
+                    <div class="text-gold text-2xl font-serif">おもてなし</div>
+                    <h3 class="font-serif text-lg text-slate-200">Omotenashi</h3>
+                    <p class="text-xs text-slate-400 font-light leading-relaxed">Selfless hospitality that anticipates your preferences before they are spoken. An atmosphere of tranquility, reverence, and culinary precision.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature 1: Minimalist Interactive Roll Studio -->
+        <section id="omakase-builder" class="py-24 px-6 bg-slateDark/50 border-y border-slateBorder">
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center space-y-2 mb-16">
+                    <span class="text-gold text-[10px] font-mono tracking-[0.3em] uppercase">Bespose Creation</span>
+                    <h2 class="text-3xl sm:text-4xl font-serif font-light text-slate-100">CUSTOM OMAKASE ROLL STUDIO</h2>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+                    
+                    <!-- Controls Column -->
+                    <div class="lg:col-span-6 glass-panel p-6 sm:p-8 rounded-2xl space-y-6 border border-slateBorder">
+                        
+                        <!-- Base -->
+                        <div>
+                            <label class="block text-[10px] font-mono uppercase text-slate-400 mb-2 tracking-widest">1. Select Rice Foundation</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button onclick="setRollOption('rice', 'edomae')" id="opt-rice-edomae" class="btn-builder p-3 rounded-xl border border-gold bg-gold/5 text-gold text-left text-xs font-medium">
+                                    <div class="font-semibold">Edomae Akazu Rice</div>
+                                    <div class="text-[10px] text-slate-400 font-normal">Aged red vinegar seasoning</div>
+                                </button>
+                                <button onclick="setRollOption('rice', 'black')" id="opt-rice-black" class="btn-builder p-3 rounded-xl border border-slateBorder bg-obsidian text-slate-400 text-left text-xs font-medium hover:border-gold/30">
+                                    <div class="font-semibold text-slate-200">Forbidden Black Rice</div>
+                                    <div class="text-[10px] text-slate-400 font-normal">Nutty antioxidant rich</div>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Proteins -->
+                        <div>
+                            <label class="block text-[10px] font-mono uppercase text-slate-400 mb-2 tracking-widest">2. Prime Ingredient (Select 1)</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button onclick="setRollOption('protein', 'otoro')" id="opt-prot-otoro" class="btn-builder p-2.5 rounded-xl border border-gold bg-gold/5 text-gold text-xs text-left">
+                                    <span class="font-medium">Wild Otoro Tuna</span> <span class="text-[10px] opacity-75">+$16</span>
+                                </button>
+                                <button onclick="setRollOption('protein', 'wagyu')" id="opt-prot-wagyu" class="btn-builder p-2.5 rounded-xl border border-slateBorder bg-obsidian text-slate-400 text-xs text-left hover:border-gold/30">
+                                    <span class="font-medium text-slate-200">A5 Miyazaki Wagyu</span> <span class="text-[10px] opacity-75">+$18</span>
+                                </button>
+                                <button onclick="setRollOption('protein', 'king-salmon')" id="opt-prot-king-salmon" class="btn-builder p-2.5 rounded-xl border border-slateBorder bg-obsidian text-slate-400 text-xs text-left hover:border-gold/30">
+                                    <span class="font-medium text-slate-200">Ora King Salmon</span> <span class="text-[10px] opacity-75">+$10</span>
+                                </button>
+                                <button onclick="setRollOption('protein', 'uni')" id="opt-prot-uni" class="btn-builder p-2.5 rounded-xl border border-slateBorder bg-obsidian text-slate-400 text-xs text-left hover:border-gold/30">
+                                    <span class="font-medium text-slate-200">Hokkaido Sea Urchin</span> <span class="text-[10px] opacity-75">+$20</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Toppings -->
+                        <div>
+                            <label class="block text-[10px] font-mono uppercase text-slate-400 mb-2 tracking-widest">3. Finishing Garnish</label>
+                            <select id="builder-topping" onchange="updateRollStudio()" class="w-full bg-obsidian border border-slateBorder rounded-xl p-3 text-xs text-slate-200 focus:border-gold outline-none">
+                                <option value="gold-caviar">24K Gold Leaf & Sturgeon Caviar (+$12)</option>
+                                <option value="black-truffle">Shaved Black Winter Truffle (+$10)</option>
+                                <option value="golden-tobiko">Golden Flying Fish Roe (+$5)</option>
+                            </select>
+                        </div>
+
+                        <!-- Add to Basket Bar -->
+                        <div class="pt-4 border-t border-slateBorder flex justify-between items-center">
+                            <div>
+                                <div class="text-[10px] font-mono uppercase text-slate-500">Calculated Value</div>
+                                <div id="builder-total-price" class="text-xl font-serif font-bold text-gold">$38.00</div>
+                            </div>
+                            <button onclick="addCustomRollToBasket()" class="px-6 py-3 rounded-full bg-gold text-obsidian font-semibold text-xs uppercase tracking-widest hover:bg-goldLight transition-all">
+                                <i class="fa-solid fa-plus me-1"></i> Add Roll To Basket
+                            </button>
+                        </div>
+
+                    </div>
+
+                    <!-- Visual Radar & Preview -->
+                    <div class="lg:col-span-6 space-y-6">
+                        <div class="glass-panel p-6 rounded-2xl border border-slateBorder flex flex-col items-center justify-center text-center">
+                            <span class="text-[10px] font-mono uppercase tracking-widest text-slate-400 mb-2">&bull; Flavor Balance Profile &bull;</span>
+                            <div class="w-full h-56">
+                                <canvas id="builderRadarCanvas"></canvas>
+                            </div>
+                            <div class="text-[11px] font-mono text-slate-400 mt-2" id="builder-summary-line">
+                                Edomae Akazu Rice &bull; Wild Otoro Tuna &bull; Gold & Caviar
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature 2: Minimalist Interactive A La Carte Menu -->
+        <section id="menu" class="py-24 px-6 max-w-7xl mx-auto">
+            <div class="text-center space-y-2 mb-12">
+                <span class="text-gold text-[10px] font-mono tracking-[0.3em] uppercase">Culinary Collection</span>
+                <h2 class="text-3xl sm:text-4xl font-serif font-light text-slate-100">THE A LA CARTE SELECTION</h2>
+                
+                <!-- Category Filter Pills -->
+                <div class="flex flex-wrap items-center justify-center gap-2 pt-6">
+                    <button onclick="filterMenuCategory('all')" class="menu-tab px-4 py-1.5 rounded-full text-xs tracking-widest uppercase bg-gold text-obsidian font-semibold">All Items</button>
+                    <button onclick="filterMenuCategory('nigiri')" class="menu-tab px-4 py-1.5 rounded-full text-xs tracking-widest uppercase bg-slateDark text-slate-400 border border-slateBorder hover:border-gold/30">Nigiri & Sashimi</button>
+                    <button onclick="filterMenuCategory('signature')" class="menu-tab px-4 py-1.5 rounded-full text-xs tracking-widest uppercase bg-slateDark text-slate-400 border border-slateBorder hover:border-gold/30">Signature Rolls</button>
+                    <button onclick="filterMenuCategory('izakaya')" class="menu-tab px-4 py-1.5 rounded-full text-xs tracking-widest uppercase bg-slateDark text-slate-400 border border-slateBorder hover:border-gold/30">Warm Entrées</button>
+                </div>
+            </div>
+
+            <!-- Dynamic Menu Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="menu-grid">
+                <!-- Items populated dynamically via JS -->
+            </div>
+        </section>
+
+        <!-- Feature 3: Sake & Tea Sommelier Pairing Assistant -->
+        <section id="sommelier" class="py-24 px-6 bg-slateDark/40 border-y border-slateBorder">
+            <div class="max-w-4xl mx-auto text-center space-y-8">
+                <div class="space-y-2">
+                    <span class="text-gold text-[10px] font-mono tracking-[0.3em] uppercase">Curated Beverage Matching</span>
+                    <h2 class="text-3xl sm:text-4xl font-serif font-light text-slate-100">SAKE & TEA SOMMELIER</h2>
+                    <p class="text-xs text-slate-400 max-w-md mx-auto">Match your dish flavor notes with rare vintage sake or artisanal Kyoto green teas.</p>
+                </div>
+
+                <div class="glass-panel p-8 rounded-2xl border border-slateBorder text-left space-y-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-[10px] font-mono uppercase text-slate-400 mb-2">Flavor Profile</label>
+                            <select id="somm-flavor" class="w-full bg-obsidian border border-slateBorder rounded-xl p-3 text-xs text-slate-200 outline-none focus:border-gold">
+                                <option value="dry">Crisp & Dry (+3.0 SMV)</option>
+                                <option value="floral">Aromatic & Floral</option>
+                                <option value="rich">Rich Umami & Aged</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-mono uppercase text-slate-400 mb-2">Primary Dish</label>
+                            <select id="somm-dish" class="w-full bg-obsidian border border-slateBorder rounded-xl p-3 text-xs text-slate-200 outline-none focus:border-gold">
+                                <option value="fatty">Fatty Tuna & Wagyu</option>
+                                <option value="lean">White Fish & Shellfish</option>
+                                <option value="sweet">Eel & Sweet Glazes</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-mono uppercase text-slate-400 mb-2">Beverage Type</label>
+                            <select id="somm-type" class="w-full bg-obsidian border border-slateBorder rounded-xl p-3 text-xs text-slate-200 outline-none focus:border-gold">
+                                <option value="sake">Junmai Daiginjo Sake</option>
+                                <option value="whisky">Rare Japanese Whisky</option>
+                                <option value="tea">Kyoto Artisanal Green Tea</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="text-center pt-2">
+                        <button onclick="runSommelierMatch()" class="px-8 py-3 rounded-full bg-gold text-obsidian font-semibold text-xs uppercase tracking-widest hover:bg-goldLight transition-all">
+                            Find Ideal Pairing
+                        </button>
+                    </div>
+
+                    <!-- Result Display -->
+                    <div id="somm-result" class="hidden pt-6 border-t border-slateBorder flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div>
+                            <span class="text-[10px] font-mono text-gold uppercase tracking-widest">&bull; Recommended Sommelier Selection</span>
+                            <h4 id="somm-res-title" class="text-lg font-serif font-bold text-slate-100">Dassai 23 Junmai Daiginjo</h4>
+                            <p id="somm-res-desc" class="text-xs text-slate-400 mt-1 max-w-lg">Milled down to 23% rice purity. Delicate melon aromas with clean finish cutting through fatty tuna richness.</p>
+                        </div>
+                        <button id="somm-add-btn" onclick="addSommelierToBasket()" class="px-5 py-2.5 rounded-full border border-gold/40 text-gold hover:bg-gold hover:text-obsidian text-xs font-semibold uppercase tracking-widest transition-all whitespace-nowrap">
+                            Add Bottle To Basket ($180)
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature 4: Sleek Table & Counter Reservation Engine -->
+        <section id="reservation" class="py-24 px-6 max-w-5xl mx-auto">
+            <div class="text-center space-y-2 mb-12">
+                <span class="text-gold text-[10px] font-mono tracking-[0.3em] uppercase">Omotenashi Hospitality</span>
+                <h2 class="text-3xl sm:text-4xl font-serif font-light text-slate-100">TABLE & COUNTER RESERVATION</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+                <!-- Zone Picker -->
+                <div class="md:col-span-5 space-y-3">
+                    <label class="text-[10px] font-mono uppercase text-slate-400 block mb-1">Select Dining Zone</label>
+                    <div onclick="setResZone('counter')" id="zone-counter" class="res-zone p-4 rounded-xl border border-gold bg-gold/5 cursor-pointer transition-all">
+                        <div class="flex justify-between items-center">
+                            <h4 class="font-serif font-bold text-slate-200">Chef's Omakase Counter</h4>
+                            <span class="text-[9px] font-mono text-gold border border-gold/30 px-2 py-0.5 rounded">12 Seats</span>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">Direct interactive seating with Executive Chef Kenji Vurado.</p>
+                    </div>
+
+                    <div onclick="setResZone('tatami')" id="zone-tatami" class="res-zone p-4 rounded-xl border border-slateBorder bg-obsidian cursor-pointer hover:border-gold/30 transition-all">
+                        <div class="flex justify-between items-center">
+                            <h4 class="font-serif font-bold text-slate-200">Private Tatami Suite</h4>
+                            <span class="text-[9px] font-mono text-slate-500">VIP Private</span>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">Sunken horigotatsu tables for private parties up to 8 guests.</p>
+                    </div>
+
+                    <div onclick="setResZone('patio')" id="zone-patio" class="res-zone p-4 rounded-xl border border-slateBorder bg-obsidian cursor-pointer hover:border-gold/30 transition-all">
+                        <div class="flex justify-between items-center">
+                            <h4 class="font-serif font-bold text-slate-200">Zen Garden Patio</h4>
+                            <span class="text-[9px] font-mono text-slate-500">Heated Outdoor</span>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">Serene courtyard tables surrounded by bamboo streams.</p>
+                    </div>
+                </div>
+
+                <!-- Reservation Form -->
+                <div class="md:col-span-7 glass-panel p-6 rounded-2xl border border-slateBorder">
+                    <form onsubmit="handleReservationSubmit(event)" class="space-y-4">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[10px] font-mono uppercase text-slate-400 mb-1">Full Name</label>
+                                <input type="text" required placeholder="Guest Name" class="w-full bg-obsidian border border-slateBorder rounded-xl p-2.5 text-xs text-slate-200 outline-none focus:border-gold">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-mono uppercase text-slate-400 mb-1">Email</label>
+                                <input type="email" required placeholder="guest@vurado.com" class="w-full bg-obsidian border border-slateBorder rounded-xl p-2.5 text-xs text-slate-200 outline-none focus:border-gold">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-3">
+                            <div>
+                                <label class="block text-[10px] font-mono uppercase text-slate-400 mb-1">Date</label>
+                                <input type="date" required class="w-full bg-obsidian border border-slateBorder rounded-xl p-2.5 text-xs text-slate-200 outline-none focus:border-gold">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-mono uppercase text-slate-400 mb-1">Time</label>
+                                <select required class="w-full bg-obsidian border border-slateBorder rounded-xl p-2.5 text-xs text-slate-200 outline-none focus:border-gold">
+                                    <option value="18:00">06:00 PM</option>
+                                    <option value="20:00" selected>08:00 PM</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-mono uppercase text-slate-400 mb-1">Guests</label>
+                                <select required class="w-full bg-obsidian border border-slateBorder rounded-xl p-2.5 text-xs text-slate-200 outline-none focus:border-gold">
+                                    <option value="1">1 Person</option>
+                                    <option value="2" selected>2 Guests</option>
+                                    <option value="4">4 Guests</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-[10px] font-mono uppercase text-slate-400 mb-1">Special Dietary Requests</label>
+                            <textarea rows="2" placeholder="Specify shellfish allergies or GLUTEN preferences..." class="w-full bg-obsidian border border-slateBorder rounded-xl p-2.5 text-xs text-slate-200 outline-none focus:border-gold"></textarea>
+                        </div>
+
+                        <button type="submit" class="w-full py-3 rounded-full bg-gold text-obsidian font-semibold text-xs uppercase tracking-widest hover:bg-goldLight transition-all">
+                            Confirm Reservation
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Slide-Out Feature Basket / Drawer -->
+    <div id="basket-drawer-backdrop" onclick="toggleBasketDrawer()" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden transition-opacity"></div>
+    
+    <div id="basket-drawer" class="fixed top-0 right-0 h-full w-full sm:w-[420px] z-50 bg-obsidian border-l border-slateBorder drawer-slide transform translate-x-full flex flex-col justify-between p-6">
+        
+        <!-- Header -->
+        <div>
+            <div class="flex justify-between items-center border-b border-slateBorder pb-4">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-bag-shopping text-gold"></i>
+                    <h3 class="font-serif font-bold text-lg text-slate-100 uppercase tracking-wider">YOUR SELECTION BAG</h3>
+                </div>
+                <button onclick="toggleBasketDrawer()" class="text-slate-400 hover:text-gold p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            <!-- Basket Items List -->
+            <div id="basket-items-container" class="py-4 space-y-4 max-h-[55vh] overflow-y-auto">
+                <!-- Dynamically populated -->
+            </div>
+        </div>
+
+        <!-- Footer / Subtotal / Checkout -->
+        <div class="border-t border-slateBorder pt-4 space-y-3 bg-obsidian">
+            <div class="space-y-1.5 text-xs font-mono">
+                <div class="flex justify-between text-slate-400">
+                    <span>Subtotal</span>
+                    <span id="basket-subtotal" class="text-slate-200">$0.00</span>
+                </div>
+                <div class="flex justify-between text-slate-400">
+                    <span>Tax (10%)</span>
+                    <span id="basket-tax" class="text-slate-200">$0.00</span>
+                </div>
+                <div class="flex justify-between text-sm font-bold text-gold border-t border-slateBorder pt-2">
+                    <span>Estimated Total</span>
+                    <span id="basket-total">$0.00</span>
+                </div>
+            </div>
+
+            <button onclick="openCheckoutModal()" class="w-full py-3.5 rounded-full bg-gold text-obsidian font-bold text-xs uppercase tracking-widest hover:bg-goldLight transition-all">
+                Proceed to Checkout
+            </button>
+        </div>
+    </div>
+
+    <!-- Minimalist Checkout Modal -->
+    <div id="checkout-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="glass-panel p-8 rounded-2xl max-w-md w-full border border-gold/30 space-y-6 relative">
+            <button onclick="closeCheckoutModal()" class="absolute top-4 right-4 text-slate-400 hover:text-gold"><i class="fa-solid fa-xmark"></i></button>
+
+            <div class="text-center space-y-1">
+                <span class="text-[10px] font-mono text-gold uppercase tracking-widest">&bull; Final Confirmation &bull;</span>
+                <h3 class="text-2xl font-serif font-bold text-slate-100">ORDER SUMMARY</h3>
+            </div>
+
+            <div id="checkout-summary-list" class="bg-obsidian/80 p-4 rounded-xl border border-slateBorder text-xs font-mono space-y-2 max-h-40 overflow-y-auto">
+                <!-- Items list -->
+            </div>
+
+            <div class="text-xs font-mono space-y-1 text-slate-400 border-t border-slateBorder pt-3">
+                <div class="flex justify-between"><span>Final Amount:</span><span id="checkout-final-amount" class="text-gold font-bold">$0.00</span></div>
+                <div class="flex justify-between"><span>Est. Preparation Time:</span><span class="text-slate-200">25 Minutes</span></div>
+            </div>
+
+            <button onclick="completeOrder()" class="w-full py-3.5 rounded-full bg-gold text-obsidian font-bold text-xs uppercase tracking-widest hover:bg-goldLight transition-all">
+                Place Order & Send To Chef
+            </button>
+        </div>
+    </div>
+
+    <!-- Minimalist Footer -->
+    <footer class="relative z-10 bg-obsidian border-t border-slateBorder py-8 px-6 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-2">
+                <span class="text-gold font-serif text-lg font-light">武</span>
+                <span class="font-serif tracking-widest text-slate-300">SUSHI VURADO</span>
+            </div>
+            <div>&copy; 2026 Sushi Vurado Group. Portfolio Showcase Edition.</div>
+        </div>
+    </footer>
+
+    <!-- JS Logic -->
+    <script>
+        // --- 1. Canvas Particles Animation ---
+        const canvas = document.getElementById('zen-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor() { this.reset(); }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.5;
+                this.speedY = Math.random() * 0.4 + 0.1;
+                this.opacity = Math.random() * 0.4 + 0.1;
+            }
+            update() {
+                this.y += this.speedY;
+                if (this.y > canvas.height) this.reset();
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = '#d4af37';
+                ctx.globalAlpha = this.opacity;
+                ctx.fill();
+            }
+        }
+        for (let i = 0; i < 30; i++) particles.push(new Particle());
+        function animateCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => { p.update(); p.draw(); });
+            requestAnimationFrame(animateCanvas);
+        }
+        animateCanvas();
+
+        // --- 2. State & Currency Management ---
+        let currentCurrency = 'USD';
+        const exchangeRates = { USD: 1, JPY: 152, EUR: 0.92 };
+        const currencySymbols = { USD: '$', JPY: '¥', EUR: '€' };
+
+        function setCurrency(curr) {
+            currentCurrency = curr;
+            document.querySelectorAll('#btn-usd, #btn-jpy, #btn-eur').forEach(btn => {
+                btn.className = "px-2.5 py-0.5 rounded-full text-slate-500 hover:text-slate-300";
+            });
+            const active = document.getElementById(`btn-${curr.toLowerCase()}`);
+            if(active) active.className = "px-2.5 py-0.5 rounded-full text-gold bg-obsidian border border-gold/30";
+            
+            renderMenu('all');
+            updateRollStudio();
+            updateBasketUI();
+        }
+
+        function formatPrice(usdAmount) {
+            const converted = Math.round(usdAmount * exchangeRates[currentCurrency]);
+            return `${currencySymbols[currentCurrency]}${converted.toLocaleString()}`;
+        }
+
+        // --- 3. Basket State & Slide-out Drawer Logic ---
+        let basket = [];
+
+        function toggleBasketDrawer() {
+            const backdrop = document.getElementById('basket-drawer-backdrop');
+            const drawer = document.getElementById('basket-drawer');
+            if (drawer.classList.contains('translate-x-full')) {
+                backdrop.classList.remove('hidden');
+                drawer.classList.remove('translate-x-full');
+            } else {
+                backdrop.classList.add('hidden');
+                drawer.classList.add('translate-x-full');
+            }
+        }
+
+        function addToBasket(item) {
+            const existing = basket.find(b => b.id === item.id);
+            if (existing) {
+                existing.qty += 1;
+            } else {
+                basket.push({ ...item, qty: 1 });
+            }
+            updateBasketUI();
+            toggleBasketDrawer();
+        }
+
+        function changeBasketQty(id, delta) {
+            const item = basket.find(b => b.id === id);
+            if (item) {
+                item.qty += delta;
+                if (item.qty <= 0) {
+                    basket = basket.filter(b => b.id !== id);
+                }
+            }
+            updateBasketUI();
+        }
+
+        function updateBasketUI() {
+            const container = document.getElementById('basket-items-container');
+            container.innerHTML = '';
+
+            let subtotalUSD = 0;
+            let totalItemsCount = 0;
+
+            if (basket.length === 0) {
+                container.innerHTML = `<div class="text-center py-12 text-slate-500 text-xs font-mono">Your basket is empty.</div>`;
+            } else {
+                basket.forEach(item => {
+                    subtotalUSD += item.priceUSD * item.qty;
+                    totalItemsCount += item.qty;
+
+                    const row = document.createElement('div');
+                    row.className = "glass-panel p-3 rounded-xl border border-slateBorder flex justify-between items-center text-xs";
+                    row.innerHTML = `
+                        <div class="space-y-0.5">
+                            <div class="font-serif font-bold text-slate-200">${item.name}</div>
+                            <div class="text-[10px] text-gold font-mono">${formatPrice(item.priceUSD)}</div>
+                        </div>
+                        <div class="flex items-center gap-2 font-mono">
+                            <button onclick="changeBasketQty('${item.id}', -1)" class="w-6 h-6 rounded bg-slateDark border border-slateBorder text-slate-400 hover:text-gold flex items-center justify-center">-</button>
+                            <span class="text-slate-200 w-4 text-center">${item.qty}</span>
+                            <button onclick="changeBasketQty('${item.id}', 1)" class="w-6 h-6 rounded bg-slateDark border border-slateBorder text-slate-400 hover:text-gold flex items-center justify-center">+</button>
+                        </div>
+                    `;
+                    container.appendChild(row);
+                });
+            }
+
+            const taxUSD = subtotalUSD * 0.1;
+            const totalUSD = subtotalUSD + taxUSD;
+
+            document.getElementById('basket-subtotal').innerText = formatPrice(subtotalUSD);
+            document.getElementById('basket-tax').innerText = formatPrice(taxUSD);
+            document.getElementById('basket-total').innerText = formatPrice(totalUSD);
+
+            // Badge updates
+            const badge = document.getElementById('basket-badge');
+            const countText = document.getElementById('basket-count-text');
+            countText.innerText = totalItemsCount;
+            if (totalItemsCount > 0) {
+                badge.innerText = totalItemsCount;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+
+        // --- 4. Menu Data & Filter System ---
+        const menuItemsData = [
+            { id: 'm1', name: 'Otoro Golden Nigiri', category: 'nigiri', priceUSD: 24, desc: 'Fatty Bluefin Tuna with 24K gold leaf & smoked shoyu.', img: 'https://images.unsplash.com/photo-1611143669185-af224c5e3252?auto=format&fit=crop&w=600&q=80' },
+            { id: 'm2', name: 'A5 Wagyu Truffle Roll', category: 'signature', priceUSD: 36, desc: 'Miyazaki A5 Wagyu, black truffle paste, glazed tare.', img: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=600&q=80' },
+            { id: 'm3', name: 'Hokkaido Uni & Ikura', category: 'nigiri', priceUSD: 32, desc: 'Sea Urchin from Rishiri Island with marinated salmon roe.', img: 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=600&q=80' },
+            { id: 'm4', name: 'Charcoal Unagi Glaze', category: 'izakaya', priceUSD: 28, desc: 'Freshwater Eel glazed with 30-year aged tare sauce.', img: 'https://images.unsplash.com/photo-1583623025817-d180a2221d0a?auto=format&fit=crop&w=600&q=80' },
+            { id: 'm5', name: 'Vurado Emperor Roll', category: 'signature', priceUSD: 42, desc: 'King Crab, Otoro, Caviar, Yuzu mousse.', img: 'https://images.unsplash.com/photo-1617196034796-73dfa7b1fd56?auto=format&fit=crop&w=600&q=80' },
+            { id: 'm6', name: 'Smoked Match Edamame', category: 'izakaya', priceUSD: 14, desc: 'Organic soybeans tossed in smoked sea salt.', img: 'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=600&q=80' }
+        ];
+
+        function renderMenu(category = 'all') {
+            const grid = document.getElementById('menu-grid');
+            grid.innerHTML = '';
+
+            const filtered = category === 'all' ? menuItemsData : menuItemsData.filter(i => i.category === category);
+
+            filtered.forEach(item => {
+                const card = document.createElement('div');
+                card.className = "glass-panel rounded-2xl overflow-hidden border border-slateBorder hover:border-gold/30 transition-all flex flex-col justify-between";
+                card.innerHTML = `
+                    <div>
+                        <div class="h-44 overflow-hidden relative">
+                            <img src="${item.img}" alt="${item.name}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" onerror="this.src='https://placehold.co/600x400/101116/d4af37?text=Sushi+Vurado'">
+                        </div>
+                        <div class="p-5 space-y-2">
+                            <div class="flex justify-between items-start">
+                                <h3 class="font-serif font-bold text-slate-100">${item.name}</h3>
+                                <span class="text-sm font-serif font-bold text-gold">${formatPrice(item.priceUSD)}</span>
+                            </div>
+                            <p class="text-xs text-slate-400 font-light">${item.desc}</p>
+                        </div>
+                    </div>
+                    <div class="p-5 pt-0">
+                        <button onclick="addToBasket({id: '${item.id}', name: '${item.name}', priceUSD: ${item.priceUSD}})" class="w-full py-2.5 rounded-full border border-gold/30 text-gold text-xs uppercase tracking-wider hover:bg-gold hover:text-obsidian transition-colors font-semibold">
+                            + Add To Bag
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function filterMenuCategory(cat) {
+            document.querySelectorAll('.menu-tab').forEach(t => {
+                t.className = "menu-tab px-4 py-1.5 rounded-full text-xs tracking-widest uppercase bg-slateDark text-slate-400 border border-slateBorder hover:border-gold/30";
+            });
+            event.target.className = "menu-tab px-4 py-1.5 rounded-full text-xs tracking-widest uppercase bg-gold text-obsidian font-semibold";
+            renderMenu(cat);
+        }
+
+        // --- 5. Omakase Builder Logic ---
+        let rollBuilderState = { rice: 'edomae', protein: 'otoro', topping: 'gold-caviar' };
+        let builderRadarChart = null;
+
+        function initBuilderRadar() {
+            const ctxChart = document.getElementById('builderRadarCanvas').getContext('2d');
+            builderRadarChart = new Chart(ctxChart, {
+                type: 'radar',
+                data: {
+                    labels: ['Umami', 'Richness', 'Acidity', 'Crunch', 'Sweetness'],
+                    datasets: [{
+                        data: [85, 90, 40, 25, 45],
+                        backgroundColor: 'rgba(212, 175, 55, 0.2)',
+                        borderColor: '#d4af37',
+                        pointBackgroundColor: '#d4af37',
+                        borderWidth: 1.5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { color: 'rgba(255, 255, 255, 0.05)' },
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                            pointLabels: { color: '#94a3b8', font: { size: 9 } },
+                            ticks: { display: false }
+                        }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+
+        function setRollOption(type, val) {
+            rollBuilderState[type] = val;
+            
+            if (type === 'rice') {
+                document.querySelectorAll('[id^="opt-rice-"]').forEach(b => b.className = "btn-builder p-3 rounded-xl border border-slateBorder bg-obsidian text-slate-400 text-left text-xs font-medium hover:border-gold/30");
+                document.getElementById(`opt-rice-${val}`).className = "btn-builder p-3 rounded-xl border border-gold bg-gold/5 text-gold text-left text-xs font-medium";
+            }
+            if (type === 'protein') {
+                document.querySelectorAll('[id^="opt-prot-"]').forEach(b => b.className = "btn-builder p-2.5 rounded-xl border border-slateBorder bg-obsidian text-slate-400 text-xs text-left hover:border-gold/30");
+                document.getElementById(`opt-prot-${val}`).className = "btn-builder p-2.5 rounded-xl border border-gold bg-gold/5 text-gold text-xs text-left";
+            }
+            updateRollStudio();
+        }
+
+        function updateRollStudio() {
+            rollBuilderState.topping = document.getElementById('builder-topping').value;
+
+            let priceUSD = 20; // Base roll price
+            if (rollBuilderState.rice === 'black') priceUSD += 2;
+            if (rollBuilderState.protein === 'otoro') priceUSD += 16;
+            if (rollBuilderState.protein === 'wagyu') priceUSD += 18;
+            if (rollBuilderState.protein === 'king-salmon') priceUSD += 10;
+            if (rollBuilderState.protein === 'uni') priceUSD += 20;
+            if (rollBuilderState.topping === 'gold-caviar') priceUSD += 12;
+            if (rollBuilderState.topping === 'black-truffle') priceUSD += 10;
+            if (rollBuilderState.topping === 'golden-tobiko') priceUSD += 5;
+
+            document.getElementById('builder-total-price').innerText = formatPrice(priceUSD);
+
+            // Radar updates
+            if (builderRadarChart) {
+                let u = 70, r = 60, a = 40;
+                if (rollBuilderState.protein === 'wagyu' || rollBuilderState.protein === 'otoro') r += 30;
+                if (rollBuilderState.protein === 'uni') u += 25;
+                builderRadarChart.data.datasets[0].data = [u, r, a, 30, 40];
+                builderRadarChart.update();
+            }
+        }
+
+        function addCustomRollToBasket() {
+            const priceUSD = parseInt(document.getElementById('builder-total-price').innerText.replace(/[^0-9]/g, '')) / exchangeRates[currentCurrency];
+            const customRollItem = {
+                id: 'custom-' + Date.now(),
+                name: `Custom Roll (${rollBuilderState.protein.toUpperCase()})`,
+                priceUSD: Math.round(priceUSD)
+            };
+            addToBasket(customRollItem);
+        }
+
+        // --- 6. Sommelier Logic ---
+        function runSommelierMatch() {
+            const res = document.getElementById('somm-result');
+            res.classList.remove('hidden');
+        }
+
+        function addSommelierToBasket() {
+            addToBasket({
+                id: 'somm-bottle',
+                name: 'Dassai 23 Junmai Daiginjo Bottle',
+                priceUSD: 180
+            });
+        }
+
+        // --- 7. Reservations & Checkout ---
+        function setResZone(z) {
+            document.querySelectorAll('.res-zone').forEach(rz => {
+                rz.className = "res-zone p-4 rounded-xl border border-slateBorder bg-obsidian cursor-pointer hover:border-gold/30 transition-all";
+            });
+            document.getElementById(`zone-${z}`).className = "res-zone p-4 rounded-xl border border-gold bg-gold/5 cursor-pointer transition-all";
+        }
+
+        function handleReservationSubmit(e) {
+            e.preventDefault();
+            alert("Reservation confirmed. Digital confirmation sent to your email.");
+        }
+
+        function openCheckoutModal() {
+            if (basket.length === 0) {
+                alert("Your bag is empty.");
+                return;
+            }
+            const summaryList = document.getElementById('checkout-summary-list');
+            summaryList.innerHTML = '';
+            
+            let totalUSD = 0;
+            basket.forEach(i => {
+                totalUSD += i.priceUSD * i.qty;
+                const div = document.createElement('div');
+                div.className = "flex justify-between border-b border-slateBorder/50 pb-1";
+                div.innerHTML = `<span>${i.name} (x${i.qty})</span><span>${formatPrice(i.priceUSD * i.qty)}</span>`;
+                summaryList.appendChild(div);
+            });
+
+            document.getElementById('checkout-final-amount').innerText = formatPrice(totalUSD * 1.1);
+            document.getElementById('checkout-modal').classList.remove('hidden');
+        }
+
+        function closeCheckoutModal() {
+            document.getElementById('checkout-modal').classList.add('hidden');
+        }
+
+        function completeOrder() {
+            alert("Order transmitted directly to Executive Prep Cam Station. Arigato gozaimasu!");
+            basket = [];
+            updateBasketUI();
+            closeCheckoutModal();
+            toggleBasketDrawer();
+        }
+
+        // Mobile Nav Toggle
+        document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        });
+
+        // Initialize Page
+        window.addEventListener('DOMContentLoaded', () => {
+            renderMenu('all');
+            initBuilderRadar();
+            updateRollStudio();
+        });
+    </script>
+</body>
+</html>

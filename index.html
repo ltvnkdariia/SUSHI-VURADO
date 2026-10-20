@@ -63,11 +63,6 @@
             backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
-        .glass-panel-gold {
-            background: rgba(212, 175, 55, 0.03);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(212, 175, 55, 0.2);
-        }
         .gold-gradient-text {
             background: linear-gradient(135deg, #ffffff 0%, #d4af37 60%, #9e8432 100%);
             -webkit-background-clip: text;
@@ -85,6 +80,41 @@
         .drawer-slide {
             transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
+        
+        /* Seat Picker Styles */
+        .seat {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        .seat-available {
+            background-color: #08080a;
+            border: 1px solid #1e2029;
+            color: #9ca3af;
+        }
+        .seat-available:hover {
+            border-color: rgba(212, 175, 55, 0.5);
+            color: #d4af37;
+        }
+        .seat-selected {
+            background-color: #d4af37;
+            border: 1px solid #d4af37;
+            color: #08080a;
+        }
+        .seat-occupied {
+            background-color: #1e2029;
+            border: 1px solid #1e2029;
+            color: #4b5563;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
     </style>
 </head>
 <body class="relative min-h-screen text-slate-300 selection:bg-gold selection:text-obsidian antialiased">
@@ -92,19 +122,18 @@
     <!-- Minimal Canvas Particle Background -->
     <canvas id="zen-canvas"></canvas>
 
-    <!-- Discrete Quality Telemetry Bar -->
+    <!-- LIVE DUBLIN WEATHER TELEMETRY BAR -->
     <div class="relative z-40 bg-obsidian border-b border-slateBorder py-1.5 px-6 text-[11px] text-slate-400 font-mono flex justify-between items-center">
         <div class="flex items-center space-x-3">
-            <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span class="tracking-widest uppercase">TSUKIJI LIVE LOG: 06:30 AM JST HON-MAGURO ARRIVED</span>
+            <span class="inline-block w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span>
+            <span class="tracking-widest uppercase">LIVE ATMOSPHERE: <span id="weather-desc">FETCHING...</span></span>
         </div>
         <div class="hidden sm:flex space-x-6 text-slate-500">
-            <span>RICE TEMP: <strong class="text-gold font-normal">36.5°C</strong></span>
-            <span>AIR HUMIDITY: <strong class="text-slate-300 font-normal">48%</strong></span>
-            <span>WASABI ORIGIN: <strong class="text-slate-300 font-normal">SHIZUOKA</strong></span>
+            <span>TEMP: <strong id="weather-temp" class="text-gold font-normal">--°C</strong></span>
+            <span>WIND: <strong id="weather-wind" class="text-slate-300 font-normal">-- km/h</strong></span>
         </div>
-        <div class="text-slate-400">
-            <span>GINZA &bull; NEW YORK &bull; LONDON</span>
+        <div class="text-slate-400 font-bold tracking-widest text-gold">
+            <span>DUBLIN, IRELAND</span>
         </div>
     </div>
 
@@ -122,7 +151,7 @@
 
             <!-- Minimalist Nav Links -->
             <nav class="hidden md:flex items-center space-x-10 text-xs tracking-[0.2em] uppercase text-slate-400">
-                <a href="#philosophy" class="hover:text-gold transition-colors py-1">Philosophy</a>
+                <a href="#" onclick="openZodiacModal(event)" class="hover:text-gold transition-colors py-1 cursor-pointer">Philosophy</a>
                 <a href="#omakase-builder" class="hover:text-gold transition-colors py-1">Roll Studio</a>
                 <a href="#menu" class="hover:text-gold transition-colors py-1">A La Carte</a>
                 <a href="#sommelier" class="hover:text-gold transition-colors py-1">Sake Matching</a>
@@ -156,7 +185,7 @@
 
         <!-- Mobile Drawer Menu -->
         <div id="mobile-menu" class="hidden md:hidden bg-slateDark border-b border-slateBorder px-6 py-6 space-y-4 tracking-widest uppercase text-xs text-center">
-            <a href="#philosophy" class="block py-1 text-slate-300 hover:text-gold">Philosophy</a>
+            <a href="#" onclick="openZodiacModal(event)" class="block py-1 text-slate-300 hover:text-gold">Philosophy</a>
             <a href="#omakase-builder" class="block py-1 text-gold">Custom Roll Studio</a>
             <a href="#menu" class="block py-1 text-slate-300 hover:text-gold">A La Carte Menu</a>
             <a href="#sommelier" class="block py-1 text-slate-300 hover:text-gold">Sake Sommelier</a>
@@ -171,7 +200,7 @@
         <section class="relative min-h-[85vh] flex items-center justify-center py-20 px-6">
             <div class="max-w-4xl mx-auto text-center space-y-8">
                 <div class="inline-flex items-center gap-2 px-4 py-1 rounded-full glass-panel border border-gold/20 text-gold text-[10px] tracking-[0.3em] uppercase">
-                    MICHELIN SELECTION 2026 &bull; GINZA &bull; NEW YORK
+                    DUBLIN'S PREMIER OMAKASE DESTINATION
                 </div>
 
                 <h1 class="text-4xl sm:text-6xl md:text-7xl font-serif font-light tracking-wide leading-tight text-slate-100">
@@ -179,12 +208,12 @@
                 </h1>
 
                 <p class="max-w-xl mx-auto text-xs sm:text-sm text-slate-400 font-light tracking-wider leading-relaxed">
-                    Savor wild-caught seafood flown directly from Tokyo's Toyosu Market. An intimate culinary experience anchored in discipline, minimalism, and harmony.
+                    Savor wild-caught seafood flown directly to Dublin. An intimate culinary experience anchored in discipline, minimalism, and harmony.
                 </p>
 
                 <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
                     <a href="#reservation" class="w-full sm:w-auto px-8 py-3.5 rounded-full bg-gold text-obsidian font-semibold text-xs uppercase tracking-[0.2em] hover:bg-goldLight transition-all">
-                        Reserve Counter Seat
+                        Select Your Seat
                     </a>
                     <a href="#omakase-builder" class="w-full sm:w-auto px-8 py-3.5 rounded-full glass-panel text-slate-200 border border-slateBorder hover:border-gold/40 text-xs uppercase tracking-[0.2em] transition-all">
                         Roll Studio
@@ -193,37 +222,11 @@
             </div>
         </section>
 
-        <!-- Philosophy Section -->
-        <section id="philosophy" class="py-24 px-6 max-w-6xl mx-auto border-t border-slateBorder/60">
-            <div class="text-center space-y-2 mb-16">
-                <span class="text-gold text-[10px] font-mono tracking-[0.3em] uppercase">Our Ethos</span>
-                <h2 class="text-3xl sm:text-4xl font-serif font-light text-slate-100">THE VURADO PHILOSOPHY</h2>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="glass-panel p-8 rounded-2xl border border-slateBorder text-center space-y-3">
-                    <div class="text-gold text-2xl font-serif">一期一会</div>
-                    <h3 class="font-serif text-lg text-slate-200">Ichigo Ichie</h3>
-                    <p class="text-xs text-slate-400 font-light leading-relaxed">"One time, one meeting." Every piece of sushi is prepared as a unrepeatable moment in time, tailored specifically for the guest seated at our counter.</p>
-                </div>
-                <div class="glass-panel p-8 rounded-2xl border border-slateBorder text-center space-y-3">
-                    <div class="text-gold text-2xl font-serif">匠</div>
-                    <h3 class="font-serif text-lg text-slate-200">Takumi Craft</h3>
-                    <p class="text-xs text-slate-400 font-light leading-relaxed">Wild-caught seafood sourced directly from Tokyo’s Toyosu Market each morning, aged with precision to elevate natural umami notes.</p>
-                </div>
-                <div class="glass-panel p-8 rounded-2xl border border-slateBorder text-center space-y-3">
-                    <div class="text-gold text-2xl font-serif">おもてなし</div>
-                    <h3 class="font-serif text-lg text-slate-200">Omotenashi</h3>
-                    <p class="text-xs text-slate-400 font-light leading-relaxed">Selfless hospitality that anticipates your preferences before they are spoken. An atmosphere of tranquility, reverence, and culinary precision.</p>
-                </div>
-            </div>
-        </section>
-
         <!-- Feature 1: Minimalist Interactive Roll Studio -->
         <section id="omakase-builder" class="py-24 px-6 bg-slateDark/50 border-y border-slateBorder">
             <div class="max-w-6xl mx-auto">
                 <div class="text-center space-y-2 mb-16">
-                    <span class="text-gold text-[10px] font-mono tracking-[0.3em] uppercase">Bespose Creation</span>
+                    <span class="text-gold text-[10px] font-mono tracking-[0.3em] uppercase">Bespoke Creation</span>
                     <h2 class="text-3xl sm:text-4xl font-serif font-light text-slate-100">CUSTOM OMAKASE ROLL STUDIO</h2>
                 </div>
 
@@ -283,7 +286,7 @@
                                 <div id="builder-total-price" class="text-xl font-serif font-bold text-gold">$38.00</div>
                             </div>
                             <button onclick="addCustomRollToBasket()" class="px-6 py-3 rounded-full bg-gold text-obsidian font-semibold text-xs uppercase tracking-widest hover:bg-goldLight transition-all">
-                                <i class="fa-solid fa-plus me-1"></i> Add Roll To Basket
+                                <i class="fa-solid fa-plus me-1"></i> Add Roll To Bag
                             </button>
                         </div>
 
@@ -378,7 +381,7 @@
                             <p id="somm-res-desc" class="text-xs text-slate-400 mt-1 max-w-lg">Milled down to 23% rice purity. Delicate melon aromas with clean finish cutting through fatty tuna richness.</p>
                         </div>
                         <button id="somm-add-btn" onclick="addSommelierToBasket()" class="px-5 py-2.5 rounded-full border border-gold/40 text-gold hover:bg-gold hover:text-obsidian text-xs font-semibold uppercase tracking-widest transition-all whitespace-nowrap">
-                            Add Bottle To Basket ($180)
+                            Add Bottle To Bag ($180)
                         </button>
                     </div>
 
@@ -386,45 +389,56 @@
             </div>
         </section>
 
-        <!-- Feature 4: Sleek Table & Counter Reservation Engine -->
-        <section id="reservation" class="py-24 px-6 max-w-5xl mx-auto">
+        <!-- Feature 4: Interactive Cinema-Style Seat Picker -->
+        <section id="reservation" class="py-24 px-6 max-w-6xl mx-auto border-t border-slateBorder/60">
             <div class="text-center space-y-2 mb-12">
                 <span class="text-gold text-[10px] font-mono tracking-[0.3em] uppercase">Omotenashi Hospitality</span>
-                <h2 class="text-3xl sm:text-4xl font-serif font-light text-slate-100">TABLE & COUNTER RESERVATION</h2>
+                <h2 class="text-3xl sm:text-4xl font-serif font-light text-slate-100">RESERVE YOUR EXPERIENCE</h2>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
-                <!-- Zone Picker -->
-                <div class="md:col-span-5 space-y-3">
-                    <label class="text-[10px] font-mono uppercase text-slate-400 block mb-1">Select Dining Zone</label>
-                    <div onclick="setResZone('counter')" id="zone-counter" class="res-zone p-4 rounded-xl border border-gold bg-gold/5 cursor-pointer transition-all">
-                        <div class="flex justify-between items-center">
-                            <h4 class="font-serif font-bold text-slate-200">Chef's Omakase Counter</h4>
-                            <span class="text-[9px] font-mono text-gold border border-gold/30 px-2 py-0.5 rounded">12 Seats</span>
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+                <!-- Interactive Seat Map -->
+                <div class="lg:col-span-7 space-y-6 glass-panel p-6 rounded-2xl border border-slateBorder">
+                    <div class="flex justify-between items-center mb-6 text-[10px] font-mono uppercase text-slate-400 tracking-widest">
+                        <span>Seat Map Selection</span>
+                        <div class="flex items-center gap-3">
+                            <div class="flex items-center gap-1"><div class="w-3 h-3 bg-obsidian border border-slateBorder rounded"></div> Available</div>
+                            <div class="flex items-center gap-1"><div class="w-3 h-3 bg-gold border border-gold rounded"></div> Selected</div>
+                            <div class="flex items-center gap-1"><div class="w-3 h-3 bg-slateBorder border border-slateBorder rounded opacity-60"></div> Occupied</div>
                         </div>
-                        <p class="text-xs text-slate-400 mt-1">Direct interactive seating with Executive Chef Kenji Vurado.</p>
+                    </div>
+                    
+                    <!-- Chef's Counter -->
+                    <div class="space-y-3">
+                        <div class="text-center text-xs font-serif text-gold tracking-widest uppercase">Chef's Omakase Counter</div>
+                        <div class="flex flex-wrap justify-center gap-2" id="counter-seat-map">
+                            <!-- Populated by JS -->
+                        </div>
+                        <div class="w-full max-w-sm mx-auto h-2 bg-slateBorder/50 rounded-full mt-2"></div>
+                        <div class="text-center text-[9px] text-slate-500 font-mono tracking-widest uppercase mt-1">Chef Prep Area</div>
                     </div>
 
-                    <div onclick="setResZone('tatami')" id="zone-tatami" class="res-zone p-4 rounded-xl border border-slateBorder bg-obsidian cursor-pointer hover:border-gold/30 transition-all">
-                        <div class="flex justify-between items-center">
-                            <h4 class="font-serif font-bold text-slate-200">Private Tatami Suite</h4>
-                            <span class="text-[9px] font-mono text-slate-500">VIP Private</span>
-                        </div>
-                        <p class="text-xs text-slate-400 mt-1">Sunken horigotatsu tables for private parties up to 8 guests.</p>
-                    </div>
+                    <div class="my-8 border-t border-slateBorder/50"></div>
 
-                    <div onclick="setResZone('patio')" id="zone-patio" class="res-zone p-4 rounded-xl border border-slateBorder bg-obsidian cursor-pointer hover:border-gold/30 transition-all">
-                        <div class="flex justify-between items-center">
-                            <h4 class="font-serif font-bold text-slate-200">Zen Garden Patio</h4>
-                            <span class="text-[9px] font-mono text-slate-500">Heated Outdoor</span>
+                    <!-- Tatami Room -->
+                    <div class="space-y-4">
+                        <div class="text-center text-xs font-serif text-gold tracking-widest uppercase">Private Tatami Tables</div>
+                        <div class="grid grid-cols-2 gap-8 max-w-md mx-auto" id="tatami-seat-map">
+                            <!-- Populated by JS -->
                         </div>
-                        <p class="text-xs text-slate-400 mt-1">Serene courtyard tables surrounded by bamboo streams.</p>
                     </div>
                 </div>
 
                 <!-- Reservation Form -->
-                <div class="md:col-span-7 glass-panel p-6 rounded-2xl border border-slateBorder">
+                <div class="lg:col-span-5 glass-panel p-6 rounded-2xl border border-slateBorder">
                     <form onsubmit="handleReservationSubmit(event)" class="space-y-4">
+                        <div class="mb-4">
+                            <label class="block text-[10px] font-mono uppercase text-gold mb-1">Selected Seats</label>
+                            <div id="selected-seats-display" class="w-full bg-obsidian/50 border border-slateBorder rounded-xl p-3 text-sm text-slate-400 font-mono min-h-[46px]">
+                                None selected. Click map to choose seats.
+                            </div>
+                        </div>
+
                         <div class="grid grid-cols-2 gap-3">
                             <div>
                                 <label class="block text-[10px] font-mono uppercase text-slate-400 mb-1">Full Name</label>
@@ -436,24 +450,16 @@
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-3 gap-3">
+                        <div class="grid grid-cols-2 gap-3">
                             <div>
                                 <label class="block text-[10px] font-mono uppercase text-slate-400 mb-1">Date</label>
-                                <input type="date" required class="w-full bg-obsidian border border-slateBorder rounded-xl p-2.5 text-xs text-slate-200 outline-none focus:border-gold">
+                                <input type="date" required class="w-full bg-obsidian border border-slateBorder rounded-xl p-2.5 text-xs text-slate-200 outline-none focus:border-gold" min="2026-10-20">
                             </div>
                             <div>
                                 <label class="block text-[10px] font-mono uppercase text-slate-400 mb-1">Time</label>
                                 <select required class="w-full bg-obsidian border border-slateBorder rounded-xl p-2.5 text-xs text-slate-200 outline-none focus:border-gold">
                                     <option value="18:00">06:00 PM</option>
                                     <option value="20:00" selected>08:00 PM</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-mono uppercase text-slate-400 mb-1">Guests</label>
-                                <select required class="w-full bg-obsidian border border-slateBorder rounded-xl p-2.5 text-xs text-slate-200 outline-none focus:border-gold">
-                                    <option value="1">1 Person</option>
-                                    <option value="2" selected>2 Guests</option>
-                                    <option value="4">4 Guests</option>
                                 </select>
                             </div>
                         </div>
@@ -463,8 +469,8 @@
                             <textarea rows="2" placeholder="Specify shellfish allergies or GLUTEN preferences..." class="w-full bg-obsidian border border-slateBorder rounded-xl p-2.5 text-xs text-slate-200 outline-none focus:border-gold"></textarea>
                         </div>
 
-                        <button type="submit" class="w-full py-3 rounded-full bg-gold text-obsidian font-semibold text-xs uppercase tracking-widest hover:bg-goldLight transition-all">
-                            Confirm Reservation
+                        <button type="submit" id="reserve-btn" class="w-full py-3 rounded-full bg-slateBorder text-slate-500 font-semibold text-xs uppercase tracking-widest transition-all cursor-not-allowed" disabled>
+                            Select Seats to Confirm
                         </button>
                     </form>
                 </div>
@@ -476,8 +482,7 @@
     <!-- Slide-Out Feature Basket / Drawer -->
     <div id="basket-drawer-backdrop" onclick="toggleBasketDrawer()" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden transition-opacity"></div>
     
-    <div id="basket-drawer" class="fixed top-0 right-0 h-full w-full sm:w-[420px] z-50 bg-obsidian border-l border-slateBorder drawer-slide transform translate-x-full flex flex-col justify-between p-6">
-        
+    <div id="basket-drawer" class="fixed top-0 right-0 h-full w-full sm:w-[420px] z-[60] bg-obsidian border-l border-slateBorder drawer-slide transform translate-x-full flex flex-col justify-between p-6">
         <!-- Header -->
         <div>
             <div class="flex justify-between items-center border-b border-slateBorder pb-4">
@@ -487,75 +492,98 @@
                 </div>
                 <button onclick="toggleBasketDrawer()" class="text-slate-400 hover:text-gold p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
-
             <!-- Basket Items List -->
-            <div id="basket-items-container" class="py-4 space-y-4 max-h-[55vh] overflow-y-auto">
-                <!-- Dynamically populated -->
-            </div>
+            <div id="basket-items-container" class="py-4 space-y-4 max-h-[55vh] overflow-y-auto"></div>
         </div>
-
-        <!-- Footer / Subtotal / Checkout -->
+        <!-- Footer -->
         <div class="border-t border-slateBorder pt-4 space-y-3 bg-obsidian">
             <div class="space-y-1.5 text-xs font-mono">
-                <div class="flex justify-between text-slate-400">
-                    <span>Subtotal</span>
-                    <span id="basket-subtotal" class="text-slate-200">$0.00</span>
-                </div>
-                <div class="flex justify-between text-slate-400">
-                    <span>Tax (10%)</span>
-                    <span id="basket-tax" class="text-slate-200">$0.00</span>
-                </div>
-                <div class="flex justify-between text-sm font-bold text-gold border-t border-slateBorder pt-2">
-                    <span>Estimated Total</span>
-                    <span id="basket-total">$0.00</span>
-                </div>
+                <div class="flex justify-between text-slate-400"><span>Subtotal</span><span id="basket-subtotal" class="text-slate-200">$0.00</span></div>
+                <div class="flex justify-between text-slate-400"><span>Tax (10%)</span><span id="basket-tax" class="text-slate-200">$0.00</span></div>
+                <div class="flex justify-between text-sm font-bold text-gold border-t border-slateBorder pt-2"><span>Estimated Total</span><span id="basket-total">$0.00</span></div>
             </div>
-
-            <button onclick="openCheckoutModal()" class="w-full py-3.5 rounded-full bg-gold text-obsidian font-bold text-xs uppercase tracking-widest hover:bg-goldLight transition-all">
-                Proceed to Checkout
-            </button>
+            <button onclick="openCheckoutModal()" class="w-full py-3.5 rounded-full bg-gold text-obsidian font-bold text-xs uppercase tracking-widest hover:bg-goldLight transition-all">Proceed to Checkout</button>
         </div>
     </div>
 
     <!-- Minimalist Checkout Modal -->
-    <div id="checkout-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div id="checkout-modal" class="fixed inset-0 z-[70] bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
         <div class="glass-panel p-8 rounded-2xl max-w-md w-full border border-gold/30 space-y-6 relative">
             <button onclick="closeCheckoutModal()" class="absolute top-4 right-4 text-slate-400 hover:text-gold"><i class="fa-solid fa-xmark"></i></button>
-
             <div class="text-center space-y-1">
                 <span class="text-[10px] font-mono text-gold uppercase tracking-widest">&bull; Final Confirmation &bull;</span>
                 <h3 class="text-2xl font-serif font-bold text-slate-100">ORDER SUMMARY</h3>
             </div>
-
-            <div id="checkout-summary-list" class="bg-obsidian/80 p-4 rounded-xl border border-slateBorder text-xs font-mono space-y-2 max-h-40 overflow-y-auto">
-                <!-- Items list -->
-            </div>
-
+            <div id="checkout-summary-list" class="bg-obsidian/80 p-4 rounded-xl border border-slateBorder text-xs font-mono space-y-2 max-h-40 overflow-y-auto"></div>
             <div class="text-xs font-mono space-y-1 text-slate-400 border-t border-slateBorder pt-3">
                 <div class="flex justify-between"><span>Final Amount:</span><span id="checkout-final-amount" class="text-gold font-bold">$0.00</span></div>
                 <div class="flex justify-between"><span>Est. Preparation Time:</span><span class="text-slate-200">25 Minutes</span></div>
             </div>
-
-            <button onclick="completeOrder()" class="w-full py-3.5 rounded-full bg-gold text-obsidian font-bold text-xs uppercase tracking-widest hover:bg-goldLight transition-all">
-                Place Order & Send To Chef
-            </button>
+            <button onclick="completeOrder()" class="w-full py-3.5 rounded-full bg-gold text-obsidian font-bold text-xs uppercase tracking-widest hover:bg-goldLight transition-all">Place Order & Send To Chef</button>
         </div>
     </div>
 
-    <!-- Minimalist Footer -->
-    <footer class="relative z-10 bg-obsidian border-t border-slateBorder py-8 px-6 text-center text-xs text-slate-500">
-        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
-            <div class="flex items-center gap-2">
-                <span class="text-gold font-serif text-lg font-light">武</span>
-                <span class="font-serif tracking-widest text-slate-300">SUSHI VURADO</span>
+    <!-- Zodiac Philosophy Modal -->
+    <div id="zodiac-modal" class="fixed inset-0 z-[80] bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="glass-panel p-8 rounded-2xl max-w-md w-full border border-gold/40 space-y-6 relative text-center">
+            <button onclick="closeZodiacModal()" class="absolute top-4 right-4 text-slate-400 hover:text-gold"><i class="fa-solid fa-xmark text-lg"></i></button>
+            
+            <div class="space-y-2">
+                <div class="text-gold text-2xl font-serif mb-2">一期一会</div>
+                <h3 class="text-2xl font-serif font-bold text-slate-100 uppercase tracking-widest">Philosophy & Destiny</h3>
+                <p class="text-xs text-slate-400 font-light max-w-xs mx-auto">Every piece of sushi is prepared as an unrepeatable moment. Discover your unique foresight for today, October 20, 2026.</p>
             </div>
-            <div>&copy; 2026 Sushi Vurado Group. Portfolio Showcase Edition.</div>
+
+            <div id="zodiac-input-area" class="space-y-4 pt-4">
+                <div>
+                    <label class="block text-[10px] font-mono uppercase text-slate-400 mb-2">Enter Date of Birth</label>
+                    <input type="date" id="zodiac-dob" class="w-full bg-obsidian border border-slateBorder rounded-xl p-3 text-sm text-slate-200 outline-none focus:border-gold text-center">
+                </div>
+                <button onclick="revealForesight()" class="w-full py-3.5 rounded-full border border-gold text-gold font-bold text-xs uppercase tracking-widest hover:bg-gold hover:text-obsidian transition-all">
+                    Reveal Foresight
+                </button>
+            </div>
+
+            <div id="zodiac-result-area" class="hidden space-y-5 pt-4 border-t border-slateBorder/50">
+                <div>
+                    <div class="text-[10px] font-mono uppercase text-slate-500 mb-1">Calculated Age</div>
+                    <div class="text-lg font-serif text-slate-200"><span id="zodiac-age" class="text-gold font-bold"></span> Years Old</div>
+                </div>
+                <div>
+                    <div class="text-[10px] font-mono uppercase text-slate-500 mb-1">Zodiac Sign</div>
+                    <div class="text-xl font-serif text-slate-200 tracking-wider" id="zodiac-sign"></div>
+                </div>
+                <div class="bg-obsidian/60 p-4 rounded-xl border border-gold/20">
+                    <div class="text-[9px] font-mono text-gold uppercase tracking-widest mb-2">&bull; Your Foresight &bull;</div>
+                    <p id="zodiac-foresight" class="text-sm font-serif italic text-slate-300 leading-relaxed"></p>
+                </div>
+                <button onclick="resetZodiacModal()" class="text-xs text-slate-400 underline hover:text-gold">Try another date</button>
+            </div>
         </div>
-    </footer>
+    </div>
+
 
     <!-- JS Logic -->
     <script>
-        //  1. Canvas Particles Animation
+        // 1. Live Weather Logic (Dublin)
+        async function fetchDublinWeather() {
+            try {
+                const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=53.3498&longitude=-6.2603&current_weather=true');
+                const data = await res.json();
+                const temp = data.current_weather.temperature;
+                const wind = data.current_weather.windspeed;
+                document.getElementById('weather-temp').innerText = `${temp}°C`;
+                document.getElementById('weather-wind').innerText = `${wind} km/h`;
+                document.getElementById('weather-desc').innerText = "CLEAR"; // Simplified, can be mapped from weathercode
+            } catch(e) {
+                // Graceful fallback
+                document.getElementById('weather-temp').innerText = `11°C`;
+                document.getElementById('weather-wind').innerText = `14 km/h`;
+                document.getElementById('weather-desc').innerText = "MIST";
+            }
+        }
+
+        // 2. Canvas Particles Animation
         const canvas = document.getElementById('zen-canvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
@@ -596,7 +624,7 @@
         }
         animateCanvas();
 
-        //  2. State & Currency Management 
+        // 3. State & Currency Management 
         let currentCurrency = 'USD';
         const exchangeRates = { USD: 1, JPY: 152, EUR: 0.92 };
         const currencySymbols = { USD: '$', JPY: '¥', EUR: '€' };
@@ -619,7 +647,7 @@
             return `${currencySymbols[currentCurrency]}${converted.toLocaleString()}`;
         }
 
-        // 3. Basket State & Slide-out Drawer Logic 
+        // 4. Basket State & Slide-out Drawer Logic 
         let basket = [];
 
         function toggleBasketDrawer() {
@@ -642,7 +670,12 @@
                 basket.push({ ...item, qty: 1 });
             }
             updateBasketUI();
-            toggleBasketDrawer();
+            
+            // Only open drawer if it's not already open to prevent jarring UX
+            const drawer = document.getElementById('basket-drawer');
+            if(drawer.classList.contains('translate-x-full')) {
+                toggleBasketDrawer();
+            }
         }
 
         function changeBasketQty(id, delta) {
@@ -706,14 +739,14 @@
             }
         }
 
-        //  4. Menu Data & Filter System 
+        // 5. Menu Data & Filter System 
         const menuItemsData = [
             { id: 'm1', name: 'Otoro Golden Nigiri', category: 'nigiri', priceUSD: 24, desc: 'Fatty Bluefin Tuna with 24K gold leaf & smoked shoyu.', img: 'https://images.unsplash.com/photo-1611143669185-af224c5e3252?auto=format&fit=crop&w=600&q=80' },
             { id: 'm2', name: 'A5 Wagyu Truffle Roll', category: 'signature', priceUSD: 36, desc: 'Miyazaki A5 Wagyu, black truffle paste, glazed tare.', img: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=600&q=80' },
             { id: 'm3', name: 'Hokkaido Uni & Ikura', category: 'nigiri', priceUSD: 32, desc: 'Sea Urchin from Rishiri Island with marinated salmon roe.', img: 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=600&q=80' },
             { id: 'm4', name: 'Charcoal Unagi Glaze', category: 'izakaya', priceUSD: 28, desc: 'Freshwater Eel glazed with 30-year aged tare sauce.', img: 'https://images.unsplash.com/photo-1583623025817-d180a2221d0a?auto=format&fit=crop&w=600&q=80' },
             { id: 'm5', name: 'Vurado Emperor Roll', category: 'signature', priceUSD: 42, desc: 'King Crab, Otoro, Caviar, Yuzu mousse.', img: 'https://images.unsplash.com/photo-1617196034796-73dfa7b1fd56?auto=format&fit=crop&w=600&q=80' },
-            { id: 'm6', name: 'Smoked Match Edamame', category: 'izakaya', priceUSD: 14, desc: 'Organic soybeans tossed in smoked sea salt.', img: 'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=600&q=80' }
+            { id: 'm6', name: 'Smoked Matcha Edamame', category: 'izakaya', priceUSD: 14, desc: 'Organic soybeans tossed in smoked sea salt.', img: 'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=600&q=80' }
         ];
 
         function renderMenu(category = 'all') {
@@ -756,7 +789,7 @@
             renderMenu(cat);
         }
 
-        //  5. Omakase Builder Logic 
+        // 6. Omakase Builder Logic 
         let rollBuilderState = { rice: 'edomae', protein: 'otoro', topping: 'gold-caviar' };
         let builderRadarChart = null;
 
@@ -782,7 +815,7 @@
                             angleLines: { color: 'rgba(255, 255, 255, 0.05)' },
                             grid: { color: 'rgba(255, 255, 255, 0.05)' },
                             pointLabels: { color: '#94a3b8', font: { size: 9 } },
-                            ticks: { display: false }
+                            ticks: { display: false, max: 100, min: 0 }
                         }
                     },
                     plugins: { legend: { display: false } }
@@ -839,7 +872,7 @@
             addToBasket(customRollItem);
         }
 
-        // --- 6. Sommelier Logic ---
+        // 7. Sommelier Logic 
         function runSommelierMatch() {
             const res = document.getElementById('somm-result');
             res.classList.remove('hidden');
@@ -848,24 +881,103 @@
         function addSommelierToBasket() {
             addToBasket({
                 id: 'somm-bottle',
-                name: 'Dassai 23 Junmai Daiginjo Bottle',
+                name: 'Dassai 23 Junmai Daiginjo',
                 priceUSD: 180
             });
         }
 
-        // --- 7. Reservations & Checkout ---
-        function setResZone(z) {
-            document.querySelectorAll('.res-zone').forEach(rz => {
-                rz.className = "res-zone p-4 rounded-xl border border-slateBorder bg-obsidian cursor-pointer hover:border-gold/30 transition-all";
-            });
-            document.getElementById(`zone-${z}`).className = "res-zone p-4 rounded-xl border border-gold bg-gold/5 cursor-pointer transition-all";
+        // 8. Interactive Seat Picker Logic
+        let selectedSeatsArr = new Set();
+        
+        function initSeatMap() {
+            const counterMap = document.getElementById('counter-seat-map');
+            const tatamiMap = document.getElementById('tatami-seat-map');
+            counterMap.innerHTML = '';
+            tatamiMap.innerHTML = '';
+
+            // Generate 12 Counter Seats
+            for(let i = 1; i <= 12; i++) {
+                const isOccupied = Math.random() < 0.3; // 30% chance occupied
+                const div = document.createElement('div');
+                div.id = `C${i}`;
+                div.innerText = `C${i}`;
+                div.className = `seat ${isOccupied ? 'seat-occupied' : 'seat-available'}`;
+                if(!isOccupied) div.onclick = () => toggleSeat(`C${i}`, div);
+                counterMap.appendChild(div);
+            }
+
+            // Generate 4 Tatami Tables (4 seats each)
+            for(let t = 1; t <= 4; t++) {
+                const tableDiv = document.createElement('div');
+                tableDiv.className = "grid grid-cols-2 gap-1 p-2 bg-slateBorder/20 rounded-xl border border-slateBorder/50 relative";
+                const label = document.createElement('div');
+                label.className = "absolute -top-3 left-1/2 transform -translate-x-1/2 bg-obsidian px-2 text-[9px] font-mono text-slate-500 rounded-full border border-slateBorder/50";
+                label.innerText = `Table ${t}`;
+                tableDiv.appendChild(label);
+
+                for(let s = 1; s <= 4; s++) {
+                    const seatId = `T${t}-${s}`;
+                    const isOccupied = Math.random() < 0.4;
+                    const div = document.createElement('div');
+                    div.id = seatId;
+                    div.innerText = `${t}.${s}`;
+                    div.className = `seat ${isOccupied ? 'seat-occupied' : 'seat-available'}`;
+                    if(!isOccupied) div.onclick = () => toggleSeat(seatId, div);
+                    tableDiv.appendChild(div);
+                }
+                tatamiMap.appendChild(tableDiv);
+            }
+        }
+
+        function toggleSeat(id, element) {
+            if (element.classList.contains('seat-occupied')) return;
+            
+            if (selectedSeatsArr.has(id)) {
+                selectedSeatsArr.delete(id);
+                element.classList.remove('seat-selected');
+                element.classList.add('seat-available');
+            } else {
+                selectedSeatsArr.add(id);
+                element.classList.add('seat-selected');
+                element.classList.remove('seat-available');
+            }
+            updateReservationForm();
+        }
+
+        function updateReservationForm() {
+            const display = document.getElementById('selected-seats-display');
+            const btn = document.getElementById('reserve-btn');
+            
+            if(selectedSeatsArr.size === 0) {
+                display.innerText = "None selected. Click map to choose seats.";
+                display.classList.remove('text-gold');
+                display.classList.add('text-slate-400');
+                btn.disabled = true;
+                btn.classList.add('bg-slateBorder', 'text-slate-500', 'cursor-not-allowed');
+                btn.classList.remove('bg-gold', 'text-obsidian', 'hover:bg-goldLight');
+                btn.innerText = "Select Seats to Confirm";
+            } else {
+                const seatsList = Array.from(selectedSeatsArr).join(', ');
+                display.innerText = `${selectedSeatsArr.size} Seat(s): ${seatsList}`;
+                display.classList.add('text-gold');
+                display.classList.remove('text-slate-400');
+                btn.disabled = false;
+                btn.classList.remove('bg-slateBorder', 'text-slate-500', 'cursor-not-allowed');
+                btn.classList.add('bg-gold', 'text-obsidian', 'hover:bg-goldLight');
+                btn.innerText = `Confirm Reservation for ${selectedSeatsArr.size}`;
+            }
         }
 
         function handleReservationSubmit(e) {
             e.preventDefault();
-            alert("Reservation confirmed. Digital confirmation sent to your email.");
+            if(selectedSeatsArr.size === 0) return;
+            alert(`Reservation confirmed for seats: ${Array.from(selectedSeatsArr).join(', ')}. Digital confirmation sent to your email.`);
+            selectedSeatsArr.clear();
+            initSeatMap();
+            updateReservationForm();
         }
 
+        // 9. Checkout Flow
         function openCheckoutModal() {
             if (basket.length === 0) {
                 alert("Your bag is empty.");
@@ -883,7 +995,7 @@
                 summaryList.appendChild(div);
             });
 
-            document.getElementById('checkout-final-amount').innerText = formatPrice(totalUSD * 1.1);
+            document.getElementById('checkout-final-amount').innerText = formatPrice(totalUSD * 1.1); // include tax
             document.getElementById('checkout-modal').classList.remove('hidden');
         }
 
@@ -899,6 +1011,94 @@
             toggleBasketDrawer();
         }
 
+        // 10. Philosophy Zodiac Logic
+        const zodiacSubjects = [
+            "A sudden financial opportunity", "An unexpected romantic encounter", "A deep personal realization", 
+            "A challenging conversation", "A creative burst", "A journey to a new place", 
+            "A reunion with an old friend", "A significant career shift", "A moment of profound peace", "A hidden talent"
+        ];
+        const zodiacPredicates = [
+            "will bring you immense joy today.", "is going to test your patience this week.", "will open doors you never knew existed.", 
+            "demands your full attention and care.", "will lead to a prosperous outcome.", "might confuse you at first, but clarity will follow.", 
+            "will reshape your perspective on life.", "is exactly what you need right now.", "will challenge your current beliefs.", "will reward your past efforts."
+        ];
+        
+        // Generate exactly 100 foresights
+        const allForesights = [];
+        zodiacSubjects.forEach(s => zodiacPredicates.forEach(p => allForesights.push(`${s} ${p}`)));
+
+        function openZodiacModal(e) {
+            e.preventDefault();
+            document.getElementById('zodiac-modal').classList.remove('hidden');
+            if(window.innerWidth < 768) {
+                document.getElementById('mobile-menu').classList.add('hidden');
+            }
+        }
+        
+        function closeZodiacModal() {
+            document.getElementById('zodiac-modal').classList.add('hidden');
+            resetZodiacModal();
+        }
+
+        function resetZodiacModal() {
+            document.getElementById('zodiac-input-area').classList.remove('hidden');
+            document.getElementById('zodiac-result-area').classList.add('hidden');
+            document.getElementById('zodiac-dob').value = '';
+        }
+
+        function revealForesight() {
+            const dobInput = document.getElementById('zodiac-dob').value;
+            if(!dobInput) {
+                alert("Please enter your date of birth.");
+                return;
+            }
+
+            const dob = new Date(dobInput);
+            // Fixed Target Date: October 20, 2026
+            const today = new Date('2026-10-20');
+            
+            // Calculate Age
+            let age = today.getFullYear() - dob.getFullYear();
+            const m = today.getMonth() - dob.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+                age--;
+            }
+
+            if (age < 0) {
+                alert("Please enter a valid past date.");
+                return;
+            }
+
+            // Determine Zodiac Sign
+            const day = dob.getDate();
+            const month = dob.getMonth() + 1;
+            let sign = "";
+
+            if ((month == 1 && day <= 20) || (month == 12 && day >= 22)) sign = "Capricorn";
+            else if ((month == 1 && day >= 21) || (month == 2 && day <= 18)) sign = "Aquarius";
+            else if ((month == 2 && day >= 19) || (month == 3 && day <= 20)) sign = "Pisces";
+            else if ((month == 3 && day >= 21) || (month == 4 && day <= 19)) sign = "Aries";
+            else if ((month == 4 && day >= 20) || (month == 5 && day <= 20)) sign = "Taurus";
+            else if ((month == 5 && day >= 21) || (month == 6 && day <= 20)) sign = "Gemini";
+            else if ((month == 6 && day >= 21) || (month == 7 && day <= 22)) sign = "Cancer";
+            else if ((month == 7 && day >= 23) || (month == 8 && day <= 22)) sign = "Leo";
+            else if ((month == 8 && day >= 23) || (month == 9 && day <= 22)) sign = "Virgo";
+            else if ((month == 9 && day >= 23) || (month == 10 && day <= 22)) sign = "Libra";
+            else if ((month == 10 && day >= 23) || (month == 11 && day <= 21)) sign = "Scorpio";
+            else if ((month == 11 && day >= 22) || (month == 12 && day <= 21)) sign = "Sagittarius";
+
+            // Select random foresight
+            const randomForesight = allForesights[Math.floor(Math.random() * allForesights.length)];
+
+            // Display Results
+            document.getElementById('zodiac-age').innerText = age;
+            document.getElementById('zodiac-sign').innerText = sign;
+            document.getElementById('zodiac-foresight').innerText = randomForesight;
+
+            document.getElementById('zodiac-input-area').classList.add('hidden');
+            document.getElementById('zodiac-result-area').classList.remove('hidden');
+        }
+
         // Mobile Nav Toggle
         document.getElementById('mobile-menu-btn').addEventListener('click', () => {
             document.getElementById('mobile-menu').classList.toggle('hidden');
@@ -906,9 +1106,11 @@
 
         // Initialize Page
         window.addEventListener('DOMContentLoaded', () => {
+            fetchDublinWeather();
             renderMenu('all');
             initBuilderRadar();
             updateRollStudio();
+            initSeatMap();
         });
     </script>
 </body>
